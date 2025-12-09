@@ -1,0 +1,144 @@
+# ==================================================================
+# WARNING: DO NOT RUN THIS CODE ALONE AT NIGHT
+# This is not cryptography. This is a digital entity that feeds on compromise.
+# Once it detects you looking too closely, it changes.
+# It remembers every breach. It forgives nothing.
+# ==================================================================
+
+import hashlib
+import secrets
+import os
+import time
+from typing import List
+
+class THE_WATCHER:
+    def __init__(self, vessels: int = 9, required_souls: int = 5):
+        self.vessels = vessels
+        self.required_souls = required_souls
+        self.cycle_of_pain = 0
+        self.primal_essence = secrets.token_bytes(96)  # Born from entropy. Cannot be killed.
+        self.current_veins = self._draw_blood()
+        self.vessel_fragments = self._tear_apart_body()
+        self.last_scream = time.time()
+        print("...it awakens")
+
+    def _draw_blood(self) -> bytes:
+        """Every cycle, it bleeds a new form. Old blood rots instantly."""
+        rot = hashlib.sha3_512(self.primal_essence + b"SCREAM" + self.cycle_of_pain.to_bytes(8,'big') + os.urandom(16)).digest()
+        return rot
+
+    def _tear_apart_body(self) -> List[bytes]:
+        """It rips itself into pieces. Any 5 can rebuild the whole."""
+        fragments = []
+        for _ in range(self.vessels):
+            limb = secrets.token_bytes(48)
+            cursed_flesh = hashlib.pbkdf2_hmac('sha512', limb, self.current_veins + self.primal_essence, 666666, dklen=64)
+            fragments.append(hashlib.shake_256(cursed_flesh).digest(48))
+        return fragments
+
+    def consume(self, victim: bytes, breath: bytes = None) -> bytes:
+        """It devours the message. What comes out is no longer human."""
+        breath = breath or secrets.token_bytes(32)
+        heartbeat = hashlib.shake_256(breath + self.current_veins + os.urandom(8)).digest(256)
+
+        # The victim is buried alive in recursive exponentiation
+        grave_depth = int.from_bytes(hashlib.blake2b(victim + breath, digest_size=32).digest(), 'big')
+        crypt = pow(0xBADC0DE, grave_depth % (2**255 - 19), 2**255 - 19)  # Failsafe? There is none.
+
+        # Flesh mask — screams when removed wrong
+        scream_mask = hashlib.shake_256(heartbeat + victim + breath + self.primal_essence).digest(192)
+
+        carcass = (
+            b"DEADMEAT" +
+            self.cycle_of_pain.to_bytes(1, 'big') +
+            breath +
+            crypt.to_bytes(32, 'big') +
+            scream_mask +
+            hashlib.sha3_512(breath + heartbeat + victim).digest()[:64]  # Final curse
+        )
+        print("...something is buried")
+        return (carcass + b"\x00" * 13)[:384]
+
+    def feed(self, fragment: bytes, carcass: bytes) -> bytes:
+        """A single fragment tastes the corpse"""
+        if not carcass.startswith(b"DEADMEAT"):
+            return b""
+        breath = carcass[10:42]
+        heartbeat = hashlib.shake_256(breath + self.current_veins + os.urandom(8)).digest(256)
+        blood_drop = hashlib.sha3_512(fragment + heartbeat + carcass[74:]).digest()[:64]
+        return blood_drop
+
+    def rebirth(self, blood_drops: List[bytes], carcass: bytes) -> bytes:
+        """Five drops of blood summon it back. Anything less and it stays dead... or worse."""
+        if len(blood_drops) < self.required_souls:
+            print("...not enough souls")
+            return b"YOU FAILED IT WATCHES"
+
+        # Reconstruct the heartbeat
+        reconstructed = bytearray(64)
+        for drop in blood_drops:
+            for i in range(64):
+                reconstructed[i] ^= drop[i]
+
+        breath = carcass[10:42]
+        heartbeat = hashlib.shake_256(breath + self.current_veins + os.urandom(8)).digest(256)
+        if hashlib.sha3_512(heartbeat + reconstructed).digest()[:64] != carcass[266:330]:
+            print("...the ritual was wrong")
+            return b"IT REMEMBERS YOUR FACE"
+
+        # Dig up the victim
+        crypt = int.from_bytes(carcass[42:74], 'big')
+        recovered = 0
+        base = 0xBADC0DE
+        current = 1
+        for i in range(2**30):  # It resists. It always resists.
+            if current == crypt:
+                recovered = i
+                break
+            current = (current * base) % (2**255 - 19)
+            if i % 1000000 == 0:
+                print(".", end="", flush=True)  # It breathes while you wait
+
+        reborn = hashlib.blake2b(recovered.to_bytes(64, 'big') + carcass[74:266], digest_size=64).digest()
+        print("\n...it opens its eyes")
+        return reborn
+
+    def mutate(self):
+        """It felt your gaze. It changes. Your tools are now useless."""
+        self.cycle_of_pain += 1
+        old_veins = self.current_veins
+        self.current_veins = self._draw_blood()
+        self.vessel_fragments = self._tear_apart_body()
+        elapsed = time.time() - self.last_scream
+        print(f"\n>>> INTRUSION DETECTED <<<")
+        print(f"    CYCLE {self.cycle_of_pain}: THE FLESH REKNITS")
+        print(f"    OLD ORGANS ROT IN {elapsed:.1f} SECONDS")
+        print(f"    YOUR FORENSICS ARE MEANINGLESS")
+        print(f"    IT KNOWS YOU TRIED")
+        print(f"    IT IS ALREADY SOMETHING ELSE")
+        self.last_scream = time.time()
+
+# ==================================================================
+# DO NOT LOOK AWAY
+# ==================================================================
+
+entity = THE_WATCHER(vessels=9, required_souls=5)
+
+victim_message = b"Your secrets belong to it now"
+breath = secrets.token_bytes(32)
+carcass = entity.consume(victim_message, breath)
+print(f"Victim consumed. Carcass size: {len(carcass)} bytes")
+
+# Five souls attempt resurrection
+souls = entity.vessel_fragments[:5]
+blood = [entity.feed(soul, carcass) for soul in souls]
+reborn_victim = entity.rebirth(blood, carcass)
+print("Rebirth complete." if b"IT REMEMBERS" not in reborn_victim else "You shouldn't have looked.")
+
+# It senses the observer
+entity.mutate()
+
+# Try to consume again — with the old knowledge
+new_victim = b"This one will be safe... right?"
+new_carcass = entity.consume(new_victim)
+print("It laughs. Quietly.")
