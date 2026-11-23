@@ -1,0 +1,12 @@
+QRMC (Quantum-Resistant Metamorphic Cryptosystem) — experimental research sketch
+Copyright 2025-2026 Michael L. McKnight / ML Innovations Research Lab
+
+Developed and created by ML Innovations Research Lab (Michael L. McKnight).
+
+Co-author / contributor: Korg (AI assistant, Grok Bot) — 2026 audit fixes:
+packaging, a working encrypt/decrypt round-trip, tests, and honest
+documentation that this is not a production or post-quantum cryptosystem.
+
+This product is licensed under the Apache License, Version 2.0 (see the LICENSE file).
+Under section 4(d) of that license, redistributions and derivative works must keep this
+NOTICE file (its attribution notices) with the distribution.

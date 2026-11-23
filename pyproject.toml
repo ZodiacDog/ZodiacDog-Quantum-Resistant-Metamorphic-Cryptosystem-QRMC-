@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qrmc"
+version = "0.2.0"
+description = "Experimental research sketch — not a production or post-quantum cryptosystem."
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [
+  { name = "Michael L. McKnight", email = "ml.innovation.research.lab@gmail.com" },
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+aead = ["cryptography>=42.0.0"]
+dev = ["pytest>=7.0", "cryptography>=42.0.0"]
+
+[project.urls]
+Homepage = "https://github.com/ZodiacDog/ZodiacDog-Quantum-Resistant-Metamorphic-Cryptosystem-QRMC-"
+Repository = "https://github.com/ZodiacDog/ZodiacDog-Quantum-Resistant-Metamorphic-Cryptosystem-QRMC-"
+
+[tool.setuptools.packages.find]
+include = ["qrmc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
